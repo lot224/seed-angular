@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html ng-app>
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="public/css/site.css" rel="stylesheet" />
+    <script src="public/js/vendor.min.js"></script>
+  </head>
+  <body id="mybody" ng-init="ng=true">
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="../" class="navbar-brand active">Application Name</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">3rd Party <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="themes">
+                <li><a href="../Custom/">Custom</a></li>
+                <li class="divider"></li>
+                <li><a href="http://jquery.com/">jQuery</a></li>
+                <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
+                <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
+                <li><a href="http://bootswatch.com/" target="_blank">Bootswatch</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="../help/">Help</a>
+            </li>
+            <li>
+              <a href="https://github.com/lot224/seed-angular" target="_blank">About</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="http://getbootstrap.com/" target="_blank">Built With Bootstrap</a></li>
+            <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <ul id="myItems">
+        <ol>Angular is <span ng-hide="ng">not </span>active</ol>
+        <ol>jQuery is <span id="jqueryActive">not </span>active</ol>
+      </ul>
+    </div>
+
+  </body>
+
+  <script type="text/javascript">
+    $("#jqueryActive").remove();
+  </script>
+</html>
