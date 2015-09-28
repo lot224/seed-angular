@@ -12,24 +12,36 @@ module.exports = function (grunt) {
     ],
     css: [],
     files: [
-      { cwd: 'node_modules/bootstrap/dist/fonts', src: '**/*.*', dest: 'public/css/fonts', expand: true }
+      { cwd: 'node_modules/bootstrap/dist/fonts', src: '**/*.*', dest: 'web/public/css/fonts', expand: true }
     ]
   };
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
-      all: ['public']
+      all: ['web/public']
     },
     compass: {
       all: {
         options: {
-          sassDir: 'assets/scss',
-          cssDir: 'public/css',
-          imagesDir: 'public/css',
+          sassDir: 'web/assets/scss',
+          cssDir: 'web/public/css',
+          imagesDir: 'web/public/css',
           outputStyle: 'compressed',
           noLineComments: true,
         }
+      }
+    },
+    copy: {
+      all: {
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: vendor.js,
+            dest: 'web/public/js'
+          }
+        ]
       }
     },
   });
@@ -43,16 +55,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('creatingVendors', 'builds the public folder and moves the js framework files', function () {
+  grunt.registerTask('creatingVendors', 'builds the public folder and moves the js framework files', function (force) {
 
     /* 
      * Because this is not a quick task, if the public folder exists we will not build the vendor related files.
      * A call to grunt clean will purge the public folder and allow a rebuild
      */
-    if (grunt.file.exists("public")) {
+    if (grunt.file.exists("web/public") && force !== true) {
       console.log("Public folder exists, skipping task creatingVendors.");
       console.log("  Delete Public folder if you have added any new vendors.");
-      return;
+      //return;
     }
 
     var config = {
@@ -66,7 +78,7 @@ module.exports = function (grunt) {
         },
         files: [{
           src: vendor.js,
-          dest: 'public/js/vendor.js'
+          dest: 'web/public/js/vendor.js'
         }]
       },
       prod: {
@@ -82,12 +94,12 @@ module.exports = function (grunt) {
         },
         files: [{
           src: vendor.js,
-          dest: 'public/js/vendor.min.js'
+          dest: 'web/public/js/vendor.min.js'
         }]
       },
       css: {
         src: vendor.css,
-        dest: 'public/css/vendor.css'
+        dest: 'web/public/css/vendor.css'
       }
     };
 
@@ -101,6 +113,26 @@ module.exports = function (grunt) {
 
   });
 
+  grunt.registerTask('compileComponent', 'compiles the angular components', function (component) {
+    component = component || 'all';
+    var path = 'web/assets/components/';
+
+    var components = grunt.file.expand({ filter: 'isDirectory', cwd: path }, '*');
+
+    for (var i = 0; i < components.length; i++) {
+      var name = components[i];
+      if (name === component || 'all' === component) {
+
+        var files = grunt.file.expand({ filter: 'isFile', cwd: path + name }, '*.js');
+        var templates = grunt.file.expand({ filter: 'isFile', cwd: path + name }, '*.html');
+
+        console.log("COMPONENT: ", name, "FILES: ", files, "TEMPLATES: ", templates);
+      }
+    }
+
+  });
+
   // Default task(s).
   grunt.registerTask('default', ['creatingVendors', 'compass']);
+  
 };

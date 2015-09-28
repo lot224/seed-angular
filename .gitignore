@@ -3,7 +3,7 @@ logs
 *.log
 
 .sass-cache
-public
+web/public
 
 .sln
 

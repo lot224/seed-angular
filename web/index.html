@@ -1,12 +1,22 @@
 ﻿<!DOCTYPE html>
-<html ng-app>
+<html ng-app="application">
   <head>
     <title></title>
     <meta charset="utf-8" />
     <link href="public/css/site.css" rel="stylesheet" />
-    <script src="public/js/vendor.min.js"></script>
+  
+
+
+    <script src="public/js/jquery.js"></script>
+    <script src="public/js/angular.js"></script>
+    <script src="public/js/angular-animate.js"></script>
+    <script src="public/js/angular-route.js"></script>
+    <script src="public/js/angular-sanitize.js"></script>
+    <script src="public/js/bootstrap.js"></script>
+
+
   </head>
-  <body id="mybody" ng-init="ng=true">
+  <body ng-controller="application.controller">
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -44,17 +54,30 @@
         </div>
       </div>
     </div>
-
     <div class="container">
       <ul id="myItems">
         <ol>Angular is <span ng-hide="ng">not </span>active</ol>
         <ol>jQuery is <span id="jqueryActive">not </span>active</ol>
       </ul>
     </div>
-
+    {{berger}}
   </body>
 
-  <script type="text/javascript">
-    $("#jqueryActive").remove();
-  </script>
+
+
+<script type="text/javascript">
+
+  var asdf = function() {
+    return 'berger';
+  }
+
+  var modd = angular.module('application', []);
+
+
+  modd.controller('application.controller', ['$scope',asdf(), function ($scope, berger) {
+    $scope.ng = true;
+    $scope.berger = 'asdf';
+  }]);
+</script>
+
 </html>
