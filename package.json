@@ -11,6 +11,10 @@
   "engines": {
     "node": ">= 4.1.1"
   },
+  "scripts": {
+    "start": "npm run lite",
+    "lite": "lite-server"
+  },
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-cli": "~0.1.13",
@@ -29,7 +33,7 @@
     "bootstrap": "~3.3.5",
     "bootswatch": "~3.3.5",
     "bootstrap-sass": "~3.3.5",
-    "jquery": "~1.11.3"
-    
+    "jquery": "~1.11.3",
+    "lite-server": "^2.1.0"
   }
 }

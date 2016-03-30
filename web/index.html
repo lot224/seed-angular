@@ -1,83 +1,27 @@
 ﻿<!DOCTYPE html>
 <html ng-app="application">
   <head>
-    <title></title>
+    <title>Angular Seed</title>
     <meta charset="utf-8" />
     <link href="public/css/site.css" rel="stylesheet" />
-  
-
-
-    <script src="public/js/jquery.js"></script>
-    <script src="public/js/angular.js"></script>
-    <script src="public/js/angular-animate.js"></script>
-    <script src="public/js/angular-route.js"></script>
-    <script src="public/js/angular-sanitize.js"></script>
-    <script src="public/js/bootstrap.js"></script>
-
-
+    <script src="public/js/vendor.js"></script>
+    <script src="public/js/global.js"></script>
+    <script src="public/js/application.templates.js"></script>
+    <script src="public/js/application.js"></script>
   </head>
-  <body ng-controller="application.controller">
-    <div class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a href="../" class="navbar-brand active">Application Name</a>
-          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-        </div>
-        <div class="navbar-collapse collapse" id="navbar-main">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">3rd Party <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="themes">
-                <li><a href="../Custom/">Custom</a></li>
-                <li class="divider"></li>
-                <li><a href="http://jquery.com/">jQuery</a></li>
-                <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
-                <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
-                <li><a href="http://bootswatch.com/" target="_blank">Bootswatch</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="../help/">Help</a>
-            </li>
-            <li>
-              <a href="https://github.com/lot224/seed-angular" target="_blank">About</a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="http://getbootstrap.com/" target="_blank">Built With Bootstrap</a></li>
-            <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+  <body ng-controller="applicationController">
+    <ng-include src="'template.navigation.htm'"></ng-include>
     <div class="container">
       <ul id="myItems">
-        <ol>Angular is <span ng-hide="ng">not </span>active</ol>
+        <ol>Angular is <span ng-hide="1+1==2">not </span>active</ol>
         <ol>jQuery is <span id="jqueryActive">not </span>active</ol>
       </ul>
     </div>
-    {{berger}}
+    <div id="ngView" style="margin-top:200px; background-color:red;" ng-view></div>
   </body>
 
-
-
-<script type="text/javascript">
-
-  var asdf = function() {
-    return 'berger';
-  }
-
-  var modd = angular.module('application', []);
-
-
-  modd.controller('application.controller', ['$scope',asdf(), function ($scope, berger) {
-    $scope.ng = true;
-    $scope.berger = 'asdf';
-  }]);
-</script>
+  <script>
+    $('#jqueryActive').remove();
+  </script>
 
 </html>

@@ -1,19 +1,48 @@
-﻿
 module.exports = function (grunt) {
 
-  var vendor = {
-    js: [
-      'node_modules/jquery/dist/jquery.js',
-      'node_modules/angular/angular.js',
-      'node_modules/angular-animate/angular-animate.js',
-      'node_modules/angular-route/angular-route.js',
-      'node_modules/angular-sanitize/angular-sanitize.js',
-      'node_modules/bootstrap/dist/js/bootstrap.js'
-    ],
-    css: [],
-    files: [
-      { cwd: 'node_modules/bootstrap/dist/fonts', src: '**/*.*', dest: 'web/public/css/fonts', expand: true }
-    ]
+  var assets = {
+    vendor: {
+      js: [
+        'node_modules/jquery/dist/jquery.js',
+        'node_modules/angular/angular.js',
+        'node_modules/angular-animate/angular-animate.js',
+        'node_modules/angular-route/angular-route.js',
+        'node_modules/angular-sanitize/angular-sanitize.js',
+        'node_modules/bootstrap/dist/js/bootstrap.js'
+      ],
+      files: [
+        { cwd: 'node_modules/bootstrap/dist/fonts', src: '**/*.*', dest: 'web/public/css/fonts', expand: true }
+      ],
+    },
+    global: {
+      js: [
+        'web/assets/features/global/angular.overwrite.js',
+        'web/assets/features/global/factory.injector.js',
+        'web/assets/features/global/config.global.js',
+        'web/assets/features/global/run.global.js',
+        'web/assets/features/global/controller.global.js',
+        'web/assets/features/global/module.global.js',
+      ]
+    },
+    application: {
+      js: [
+        'web/assets/features/application/config.application.js',
+        'web/assets/features/application/run.application.js',
+        'web/assets/features/application/controller.application.js',
+        'web/assets/features/application/module.application.js',
+      ],
+      templates: [
+        'template.navigation.htm'
+      ]
+    },
+    about: {
+      js: [
+        'web/assets/features/about/config.about.js',
+        'web/assets/features/about/run.about.js',
+        'web/assets/features/about/controller.about.js',
+        'web/assets/features/about/module.about.js',
+      ]
+    },
   };
 
   grunt.initConfig({
@@ -32,20 +61,16 @@ module.exports = function (grunt) {
         }
       }
     },
-    copy: {
-      all: {
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: vendor.js,
-            dest: 'web/public/js'
-          }
-        ]
+    watch: {
+      css: {
+        files: ['web/assets/scss/**/*.scss'],
+        tasks: ['compass'],
+        options: { spawn: false }
       }
-    },
+    }
   });
 
+  // Add watches for the javascript files, html files, and css files
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -55,84 +80,113 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
-  grunt.registerTask('creatingVendors', 'builds the public folder and moves the js framework files', function (force) {
+  var setupWatches = function () {
+    for (assetName in assets) {
+      var asset = assets[assetName];
 
-    /* 
-     * Because this is not a quick task, if the public folder exists we will not build the vendor related files.
-     * A call to grunt clean will purge the public folder and allow a rebuild
-     */
-    if (grunt.file.exists("web/public") && force !== true) {
-      console.log("Public folder exists, skipping task creatingVendors.");
-      console.log("  Delete Public folder if you have added any new vendors.");
-      //return;
-    }
+      // watch js files.
+      if (asset.js) {
+        grunt.config('watch.' + assetName + '_js', {
+          files: asset.js,
+          tasks: ['uglify:' + assetName, 'uglify:' + assetName + '-min'],
+          options: { spawn: false }
+        })
+      };
 
-    var config = {
-      dev: {
-        options: {
-          banner: "(function(window, undefined) {'use strict';\n\n",
-          footer: "\n\n})(window);",
-          mangle: false,
-          beautify: true,
-          sourceMap: true,
-        },
-        files: [{
-          src: vendor.js,
-          dest: 'web/public/js/vendor.js'
-        }]
-      },
-      prod: {
-        options: {
-          banner: "(function(window, undefined) {'use strict';\n\n",
-          footer: "\n\n})(window);",
-          mangle: true,
-          beautify: false,
-          sourceMap: true,
-          compress: {
-            drop_console: true // <-
+      if (asset.templates) {
+        grunt.config('watch.' + assetName + '_html', {
+          files: asset.templates,
+          tasks: ['ngtemplates:' + assetName],
+          options: {
+            cwd: {
+              files: 'web/assets/features/' + assetName,
+            },
+            spawn: false
           }
-        },
-        files: [{
-          src: vendor.js,
-          dest: 'web/public/js/vendor.min.js'
-        }]
-      },
-      css: {
-        src: vendor.css,
-        dest: 'web/public/css/vendor.css'
+        })
       }
-    };
+    }
+  }
 
-    grunt.config('uglify.vendorsDev', config.dev);
-    grunt.config('uglify.vendorsProd', config.prod);
-    grunt.config('concat.vendors', config.css);
-    grunt.config('copy.vendors', { files: vendor.files });
+  grunt.registerTask('build', 'builds the assets', function (section) {
 
-    grunt.task.run(['uglify:vendorsDev', 'uglify:vendorsProd', 'concat:vendors', 'copy:vendors']);
+    var tasks = [];
 
+    var sections = {};
 
-  });
+    if (section != null) {
+      if (assets[section] != null) {
+        sections[section] = {};
+      } else {
+        console.log("Section '" + section + '" not found, ending...');
+        return;
+      }
+    } else {
+      sections = assets;
+    }
 
-  grunt.registerTask('compileComponent', 'compiles the angular components', function (component) {
-    component = component || 'all';
-    var path = 'web/assets/components/';
+    for (assetName in sections) {
+      var asset = assets[assetName];
 
-    var components = grunt.file.expand({ filter: 'isDirectory', cwd: path }, '*');
+      if (asset['templates'] != null && asset['templates'].length > 0) {
+        grunt.config('ngtemplates.' + assetName, {
+          cwd: 'web/assets/features/' + assetName,
+          src: asset['templates'],
+          dest: 'web/public/js/' + assetName + '.templates.js',
+          options: {
+            standalone: true,
+            prefix: '',
+            module: assetName + '.templates',
+            htmlmin: {
+              collapseWhitespace: true,
+              removeComments: true
+            }
+          }
+        });
+        tasks.push('ngtemplates:' + assetName);
+      }
+      if (asset['js'] != null && asset['js'].length > 0) {
+        grunt.config('uglify.' + assetName, {
+          options: {
+            //banner: "(function(window, undefined) {'use strict';\n\n",
+            //footer: "\n\n})(window);",
+            mangle: false,
+            beautify: true,
+          },
+          files: [{
+            src: asset['js'],
+            dest: "web/public/js/" + assetName + ".js"
+          }]
+        });
+        tasks.push('uglify:' + assetName);
 
-    for (var i = 0; i < components.length; i++) {
-      var name = components[i];
-      if (name === component || 'all' === component) {
-
-        var files = grunt.file.expand({ filter: 'isFile', cwd: path + name }, '*.js');
-        var templates = grunt.file.expand({ filter: 'isFile', cwd: path + name }, '*.html');
-
-        console.log("COMPONENT: ", name, "FILES: ", files, "TEMPLATES: ", templates);
+        grunt.config('uglify.' + assetName + '-min', {
+          options: {
+            //banner: "(function(window, undefined) {'use strict';\n\n",
+            //footer: "\n\n})(window);",
+            mangle: false,
+            beautify: true,
+          },
+          files: [{
+            src: asset['js'],
+            dest: "web/public/js/" + assetName + ".min.js"
+          }]
+        });
+        tasks.push('uglify:' + assetName + '-min');
+      }
+      if (asset['files'] != null && asset['files'].length > 0) {
+        grunt.config('copy.' + assetName, {
+          files: asset['files']
+        });
+        tasks.push('copy:' + assetName);
       }
     }
 
-  });
+    grunt.task.run(tasks);
+  })
 
   // Default task(s).
-  grunt.registerTask('default', ['creatingVendors', 'compass']);
-  
+  grunt.registerTask('default', ['clean', 'build', 'compass', 'watch']);
+
+  setupWatches();
 };
