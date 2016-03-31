@@ -1,3 +1,4 @@
+
 module.exports = function (grunt) {
 
   var assets = {
@@ -16,33 +17,31 @@ module.exports = function (grunt) {
     },
     global: {
       js: [
-        'web/assets/features/global/angular.overwrite.js',
-        'web/assets/features/global/factory.injector.js',
-        'web/assets/features/global/config.global.js',
-        'web/assets/features/global/run.global.js',
-        'web/assets/features/global/controller.global.js',
-        'web/assets/features/global/module.global.js',
+        'web/assets/modules/global/angular.overwrite.js',
+        'web/assets/modules/global/factory.injector.js',
+        'web/assets/modules/global/config.global.js',
+        'web/assets/modules/global/run.global.js',
+        'web/assets/modules/global/controller.global.js',
+        'web/assets/modules/global/module.global.js',
       ]
     },
     application: {
       js: [
-        'web/assets/features/application/config.application.js',
-        'web/assets/features/application/run.application.js',
-        'web/assets/features/application/controller.application.js',
-        'web/assets/features/application/module.application.js',
+        'web/assets/modules/application/features/navigation/directive.navigation.js',
+        'web/assets/modules/application/features/home/controller.home.js',
+        'web/assets/modules/application/features/about/controller.about.js',
+
+        'web/assets/modules/application/config.application.js',
+        'web/assets/modules/application/run.application.js',
+        'web/assets/modules/application/controller.application.js',
+        'web/assets/modules/application/module.application.js'
       ],
       templates: [
-        'template.navigation.htm'
+        'home/template.home.htm',
+        'about/template.about.htm',
+        'navigation/template.navigation.htm'
       ]
-    },
-    about: {
-      js: [
-        'web/assets/features/about/config.about.js',
-        'web/assets/features/about/run.about.js',
-        'web/assets/features/about/controller.about.js',
-        'web/assets/features/about/module.about.js',
-      ]
-    },
+    }
   };
 
   grunt.initConfig({
@@ -99,7 +98,7 @@ module.exports = function (grunt) {
           tasks: ['ngtemplates:' + assetName],
           options: {
             cwd: {
-              files: 'web/assets/features/' + assetName,
+              files: 'web/assets/modules/' + assetName + '/features',
             },
             spawn: false
           }
@@ -130,7 +129,7 @@ module.exports = function (grunt) {
 
       if (asset['templates'] != null && asset['templates'].length > 0) {
         grunt.config('ngtemplates.' + assetName, {
-          cwd: 'web/assets/features/' + assetName,
+          cwd: 'web/assets/modules/' + assetName + '/features',
           src: asset['templates'],
           dest: 'web/public/js/' + assetName + '.templates.js',
           options: {

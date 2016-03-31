@@ -1,0 +1,23 @@
+﻿<h1>Home</h1>
+<h2>The home page for this application.</h2>
+
+<h3>Resources</h3>
+<h4>
+    <div style="margin-bottom:10px;">This application was built using:</div>
+    <div ng-repeat="item in resources" style="margin-bottom:20px;">
+      <span ng-if="$last">and <a href="{{item.url}}">{{item.name}} {{item.version}}</a></span>
+      <span ng-if="!$last"><a href="{{item.url}}">{{item.name}} {{item.version}}</a>,</span>
+    </div>
+</h4>
+<h4>
+  The theme is <a href="http://bootswatch.com/sandstone/" target="_blank">Sandstone</a> and its provided by <a href="http://bootswatch.com/" target="_blank">http://bootswatch.com/</a>
+</h4>
+
+<h3>Tools</h3>
+<h4>
+  <div ng-repeat="item in devTools" style="margin-top:5px;">
+    <a href="{{item.url}}">{{item.name}} {{item.version}}</a>
+    <div style="margin:5px 0px 20px 20px;">{{item.description}}</div>
+  </div>
+</h4>
+

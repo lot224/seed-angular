@@ -1,27 +1,18 @@
 ﻿<!DOCTYPE html>
 <html ng-app="application">
-  <head>
-    <title>Angular Seed</title>
-    <meta charset="utf-8" />
-    <link href="public/css/site.css" rel="stylesheet" />
-    <script src="public/js/vendor.js"></script>
-    <script src="public/js/global.js"></script>
-    <script src="public/js/application.templates.js"></script>
-    <script src="public/js/application.js"></script>
-  </head>
-  <body ng-controller="applicationController">
-    <ng-include src="'template.navigation.htm'"></ng-include>
-    <div class="container">
-      <ul id="myItems">
-        <ol>Angular is <span ng-hide="1+1==2">not </span>active</ol>
-        <ol>jQuery is <span id="jqueryActive">not </span>active</ol>
-      </ul>
-    </div>
-    <div id="ngView" style="margin-top:200px; background-color:red;" ng-view></div>
-  </body>
+<head>
+  <title>Angular Seed</title>
+  <meta charset="utf-8" />
+  <link href="public/css/site.css" rel="stylesheet" />
+  <script src="public/js/vendor.js"></script>
+  <script src="public/js/global.js"></script>
+  <script src="public/js/application.templates.js"></script>
+  <script src="public/js/application.js"></script>
+</head>
+<body ng-controller="applicationController">
+  <navigation></navigation>
+  <div class="container" ng-view>
 
-  <script>
-    $('#jqueryActive').remove();
-  </script>
-
+  </div>
+</body>
 </html>

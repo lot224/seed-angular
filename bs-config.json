@@ -1,5 +1,5 @@
 {
- "injectChanges" : true,
-  "files" : ["./web/**/*.{.html, htm, css, js, ts}","*.html"],
-  "server" : { "baseDir":"./web"}
+  "injectChanges": false,
+  "files": [ "./web/**/*.{.html, htm, css, js, ts}", "*.html" ],
+  "server": { "baseDir": "./web" }
 }
