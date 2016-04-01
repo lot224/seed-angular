@@ -9,3 +9,6 @@ Angular Seed Project
 
 3. open another command/terminal window to start the web server and load the index page
   > `x:\{project dir}\npm start` (starts the web server and serves the web/index.html page and its assets.)
+
+4. open one more command/terminal window to start the Karma testing harness.
+  > `x:\{project dir}\grunt karma`
