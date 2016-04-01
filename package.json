@@ -34,6 +34,14 @@
     "bootswatch": "~3.3.5",
     "bootstrap-sass": "~3.3.5",
     "jquery": "~1.11.3",
-    "lite-server": "^2.1.0"
+    "lite-server": "^2.1.0",
+
+
+    "karma-jasmine": "~0.1.5",
+    "karma-phantomjs-launcher": "~0.1.2",
+    "karma": "~0.10.9",
+    "grunt-karma": "~0.6.2",
+    "karma-coverage": "~0.1",
+    "angular-mocks": "~1.4.6"
   }
 }

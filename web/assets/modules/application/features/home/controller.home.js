@@ -1,6 +1,4 @@
 ﻿var homeController = ['$scope', function ($scope) {
-  console.log('homeController');
-
 
   $scope.resources = [
     { name: 'AngularJS', version: 'v1.4.7', url: 'https://code.angularjs.org/1.4.7/' },

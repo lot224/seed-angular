@@ -1,7 +1,7 @@
 
 module.exports = function (grunt) {
 
-  var assets = {
+  grunt.assets = {
     vendor: {
       js: [
         'node_modules/jquery/dist/jquery.js',
@@ -83,8 +83,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   var setupWatches = function () {
-    for (assetName in assets) {
-      var asset = assets[assetName];
+    for (assetName in grunt.assets) {
+      var asset = grunt.assets[assetName];
 
       // watch js files.
       if (asset.js) {
@@ -117,18 +117,18 @@ module.exports = function (grunt) {
     var sections = {};
 
     if (section != null) {
-      if (assets[section] != null) {
+      if (grunt.assets[section] != null) {
         sections[section] = {};
       } else {
         console.log("Section '" + section + '" not found, ending...');
         return;
       }
     } else {
-      sections = assets;
+      sections = grunt.assets;
     }
 
     for (assetName in sections) {
-      var asset = assets[assetName];
+      var asset = grunt.assets[assetName];
 
       if (asset['templates'] != null && asset['templates'].length > 0) {
         grunt.config('ngtemplates.' + assetName, {
@@ -188,6 +188,8 @@ module.exports = function (grunt) {
   })
 
   // Default task(s).
+  grunt.loadTasks('testing');
+
   grunt.registerTask('default', ['clean', 'build', 'compass', 'watch']);
 
   setupWatches();

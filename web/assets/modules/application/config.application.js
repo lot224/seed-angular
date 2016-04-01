@@ -4,6 +4,4 @@
   $routeProvider.when('/about', { templateUrl: 'about/template.about.htm', controller: 'aboutController', });
   $routeProvider.otherwise({ redirectTo: '/' });
 
-  console.log('applicationConfig');
-
 }];
