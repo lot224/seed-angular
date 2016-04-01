@@ -18,10 +18,11 @@ module.exports = function (grunt) {
     global: {
       js: [
         'web/assets/modules/global/angular.overwrite.js',
-        'web/assets/modules/global/factory.injector.js',
         'web/assets/modules/global/config.global.js',
         'web/assets/modules/global/run.global.js',
         'web/assets/modules/global/controller.global.js',
+
+        // This file must remain last, as it requires the javascript files to be loaded.
         'web/assets/modules/global/module.global.js',
       ]
     },
@@ -34,6 +35,8 @@ module.exports = function (grunt) {
         'web/assets/modules/application/config.application.js',
         'web/assets/modules/application/run.application.js',
         'web/assets/modules/application/controller.application.js',
+
+        // This file must remain last, as it requires the javascript files to be loaded.
         'web/assets/modules/application/module.application.js'
       ],
       templates: [

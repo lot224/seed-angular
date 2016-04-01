@@ -1,5 +1,4 @@
 ﻿angular.module("global", ["ngRoute", "ngAnimate", "ngSanitize"])
-  .factory('injectorFactory', injectorFactory)
   .controller("globalController", globalController)
   .config(globalConfig)
   .run(globalRun)
