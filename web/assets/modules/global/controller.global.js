@@ -1,3 +1,3 @@
-﻿var globalController = ['$scope', function ($scope) {
+﻿var globalController = ['$scope', function ($scope) { // jshint ignore:line
 
 }];

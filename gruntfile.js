@@ -17,32 +17,28 @@ module.exports = function (grunt) {
     },
     global: {
       js: [
-        'web/assets/modules/global/angular.overwrite.js',
-        'web/assets/modules/global/config.global.js',
-        'web/assets/modules/global/run.global.js',
-        'web/assets/modules/global/controller.global.js',
-
-        // This file must remain last, as it requires the javascript files to be loaded.
-        'web/assets/modules/global/module.global.js',
+        'web/assets/modules/global/pollyfill.js',
+        'web/assets/modules/global/**/*.js',              // Include all javascript files under .global
+        '!web/assets/modules/global/module.global.js',    // Exclude the module file, this needs to be added last.
+        '.gruntCache/global.templates.js',                // Add the templates file generated from the ngTemplates package.
+        'web/assets/modules/global/module.global.js'      // Finally add the module file back in at the end of the array.
       ]
     },
     application: {
       js: [
-        'web/assets/modules/application/features/navigation/directive.navigation.js',
-        'web/assets/modules/application/features/home/controller.home.js',
-        'web/assets/modules/application/features/about/controller.about.js',
-
-        'web/assets/modules/application/config.application.js',
-        'web/assets/modules/application/run.application.js',
-        'web/assets/modules/application/controller.application.js',
-
-        // This file must remain last, as it requires the javascript files to be loaded.
-        'web/assets/modules/application/module.application.js'
-      ],
+          'web/assets/modules/application/**/*.js',                 // Include all javascript files under ..global
+          '!web/assets/modules/application/module.application.js',  // Exclude the module file, this needs to be added last.
+          '.gruntCache/application.templates.js',                   // Add the templates file generated from the ngTemplates package.
+          'web/assets/modules/application/module.application.js'    // Finally add the module file back in at the end of the array.
+        ],
       templates: [
-        'home/template.home.htm',
-        'about/template.about.htm',
-        'navigation/template.navigation.htm'
+        '**/*.htm'
+      ]
+    },
+    site: {
+      js: [
+        'web/public/js/global.js',
+        'web/public/js/application.js'
       ]
     }
   };
@@ -69,6 +65,30 @@ module.exports = function (grunt) {
         tasks: ['compass'],
         options: { spawn: false }
       }
+    },
+    jshint: {
+      options: {
+        bitwise: true,
+        camelcase: false,
+        eqeqeq: false,
+        forin: true,
+        immed: true,
+        indent: 4,
+        latedef: true,
+        newcap: false,
+        noarg: true,
+        noempty: true,
+        nonew: true,
+        regexp: true,
+        undef: true,
+        unused: true,
+        trailing: true,
+        predef: ["angular", "window", "document", "console"]
+      },
+      all: [
+        'web/assets/**/*.js'
+      ],
+      single: []
     }
   });
 
@@ -110,6 +130,14 @@ module.exports = function (grunt) {
     }
   }
 
+  grunt.event.on('watch', function (action, filepath, target) {
+    if (filepath.indexOf('.js') > 0) {
+      process.stdout.write('\x1Bc');
+      grunt.config('jshint.single', filepath);
+      grunt.task.run('jshint:single');
+    }
+  });
+
   grunt.registerTask('build', 'builds the assets', function (section) {
 
     var tasks = [];
@@ -134,7 +162,7 @@ module.exports = function (grunt) {
         grunt.config('ngtemplates.' + assetName, {
           cwd: 'web/assets/modules/' + assetName + '/features',
           src: asset['templates'],
-          dest: 'web/public/js/' + assetName + '.templates.js',
+          dest: '.gruntCache/' + assetName + '.templates.js',
           options: {
             standalone: true,
             prefix: '',
@@ -190,7 +218,7 @@ module.exports = function (grunt) {
   // Default task(s).
   grunt.loadTasks('testing');
 
-  grunt.registerTask('default', ['clean', 'build', 'compass', 'watch']);
+  grunt.registerTask('default', ['clean', 'jshint:all', 'build', 'compass', 'watch']);
 
   setupWatches();
 };

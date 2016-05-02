@@ -1,3 +1,3 @@
-﻿var applicationRun = [function () {
+﻿var applicationRun = [function () { // jshint ignore:line
 
 }];

@@ -1,10 +1,10 @@
-﻿var homeController = ['$scope', function ($scope) {
+﻿var homeController = ['$scope', function ($scope) { // jshint ignore:line
 
   $scope.resources = [
     { name: 'AngularJS', version: 'v1.4.7', url: 'https://code.angularjs.org/1.4.7/' },
     { name: 'Bootstrap', version: 'v3.3.5', url: 'https://github.com/twbs/bootstrap/tree/v3.3.5' },
     { name: 'jQuery', version: '1.11.3', url: 'http://jquery.com/' },
-  ]
+  ];
 
   $scope.devTools = [
     { name: 'Node.js', version: '4.1.1', url: 'https://nodejs.org/en/', description: "Node.js® is a JavaScript runtime built on Chrome's V8 JavaScript engine. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient. Node.js' package ecosystem, npm, is the largest ecosystem of open source libraries in the world." },
@@ -21,5 +21,5 @@
     { name: 'grunt-contrib-clean', version: '~0.6.0', url: 'https://www.npmjs.com/package/' + this.name, description: 'Clean files and folders' },
     { name: 'bootstrap-sass', version: '~3.3.5', url: 'https://www.npmjs.com/package/' + this.name, description: 'bootstrap-sass is a Sass-powered version of Bootstrap 3, ready to drop right into your Sass powered applications.' },
     { name: 'lite-server', version: '^2.1.0', url: 'https://www.npmjs.com/package/' + this.name, description: 'Lightweight development node server for serving a web app, providing a fallback for browser history API, loading in the browser, and injecting scripts on the fly.' },
-  ]
+  ];
 }];

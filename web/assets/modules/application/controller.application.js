@@ -1,3 +1,3 @@
-﻿var applicationController = ['$scope', function ($scope) {
+﻿var applicationController = ['$scope', function ($scope) { // jshint ignore:line
   
 }];

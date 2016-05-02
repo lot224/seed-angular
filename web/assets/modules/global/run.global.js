@@ -1,3 +1,3 @@
-﻿var globalRun = [function () {
+﻿var globalRun = [function () { // jshint ignore:line
 
 }];

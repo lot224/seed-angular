@@ -1,3 +1,3 @@
-﻿var globalConfig = [function () {
+﻿var globalConfig = [function () { // jshint ignore:line
 
 }];
