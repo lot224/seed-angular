@@ -22,6 +22,9 @@ module.exports = function (grunt) {
         '!web/assets/modules/global/module.global.js',    // Exclude the module file, this needs to be added last.
         '.gruntCache/global.templates.js',                // Add the templates file generated from the ngTemplates package.
         'web/assets/modules/global/module.global.js'      // Finally add the module file back in at the end of the array.
+      ],
+      templates: [
+        '**/*.htm'
       ]
     },
     application: {
@@ -33,12 +36,6 @@ module.exports = function (grunt) {
         ],
       templates: [
         '**/*.htm'
-      ]
-    },
-    site: {
-      js: [
-        'web/public/js/global.js',
-        'web/public/js/application.js'
       ]
     }
   };
@@ -118,7 +115,7 @@ module.exports = function (grunt) {
       if (asset.templates) {
         grunt.config('watch.' + assetName + '_html', {
           files: asset.templates,
-          tasks: ['ngtemplates:' + assetName],
+          tasks: ['ngtemplates:' + assetName, 'uglify:' + assetName, 'uglify:' + assetName + '-min'],
           options: {
             cwd: {
               files: 'web/assets/modules/' + assetName + '/features',
