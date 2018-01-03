@@ -1,0 +1,31 @@
+@charset "UTF-8";
+@import "../../node_modules/font-awesome/scss/font-awesome";
+
+@mixin alert-variant($background, $border, $text-color) {
+  background-color: $background;
+  border-color: $border;
+  color: $text-color;
+
+  hr {
+    border-top-color: darken($border, 5%);
+  }
+
+  .alert-link {
+    color: darken($text-color, 10%);
+  }
+}
+
+.fa-spin-fast {
+  -webkit-animation: fa-spin 1s infinite linear;
+  animation: fa-spin 1s infinite linear
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+  display: none !important;
+} 
+ 
+$brand-primary: darken(#428bca, 6.5%);
+
+.alert-primary {
+  @include alert-variant($brand-primary, darken($brand-primary, 5%), #FFFFFF);
+}

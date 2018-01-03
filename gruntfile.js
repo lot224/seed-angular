@@ -1,78 +1,143 @@
+module.exports = function (grunt) { // jshint ignore:line
 
-module.exports = function (grunt) {
+  var configuration = grunt.configuration = (grunt.option('config') || 'dev').toLowerCase();
 
-  grunt.assets = {
-    vendor: {
-      js: [
-        'node_modules/jquery/dist/jquery.js',
-        'node_modules/angular/angular.js',
-        'node_modules/angular-animate/angular-animate.js',
-        'node_modules/angular-route/angular-route.js',
-        'node_modules/angular-sanitize/angular-sanitize.js',
-        'node_modules/bootstrap/dist/js/bootstrap.js'
-      ],
-      files: [
-        { cwd: 'node_modules/bootstrap/dist/fonts', src: '**/*.*', dest: 'web/public/css/fonts', expand: true }
-      ],
-    },
-    global: {
-      js: [
-        'web/assets/modules/global/pollyfill.js',
-        'web/assets/modules/global/**/*.js',              // Include all javascript files under .global
-        '!web/assets/modules/global/module.global.js',    // Exclude the module file, this needs to be added last.
-        '.gruntCache/global.templates.js',                // Add the templates file generated from the ngTemplates package.
-        'web/assets/modules/global/module.global.js'      // Finally add the module file back in at the end of the array.
-      ],
-      templates: [
-        '**/*.htm'
-      ]
-    },
-    application: {
-      js: [
-          'web/assets/modules/application/**/*.js',                 // Include all javascript files under ..global
-          '!web/assets/modules/application/module.application.js',  // Exclude the module file, this needs to be added last.
-          '.gruntCache/application.templates.js',                   // Add the templates file generated from the ngTemplates package.
-          'web/assets/modules/application/module.application.js'    // Finally add the module file back in at the end of the array.
-        ],
-      templates: [
-        '**/*.htm'
-      ]
-    }
-  };
+  console.info("#######################################################################");
+  console.info("##");
+  console.info("## Using (" + configuration.green + ") Configuration");
+  console.info("## Other Configurations: grunt <task> --config=qa|release|staging|uat|dev");
+  console.info("##");
+  console.info("## " + "MAKE SURE ALL 'Angular.{env}.config.js' FILES ARE UPDATED CORRECTLY.".yellow);
+  console.info("##");
+  console.info("#######################################################################\n");
+
+// Folder to deploy the app too, leave blank to do nothing. (such as development where the app folder is the publish folder.)
+  var publishLocation =
+    configuration === 'qa' ? '' :                     // QA Environment
+      configuration === 'release' ? '' :              // Production Environment
+        configuration === 'staging' ? '' :            // Staging Environment
+          configuration === 'uat' ? '' :              // UAT Environment
+            'C:/test/';                         // Dev Environment (leave blank)
+  
+  var thirdPartyFiles = [
+    'node_modules/angular/angular.js',
+    'node_modules/angular-animate/angular-animate.js',
+    'node_modules/angular-sanitize/angular-sanitize.js',
+    'node_modules/jquery/dist/jquery.js',
+    'node_modules/bootstrap/dist/js/bootstrap.js'
+  ];
+
+  var copyFiles = [
+    { expand: true, flatten: false, cwd: 'node_modules/bootstrap/dist/css/', src: ['**/*.*'], dest: 'public/css/' },
+    { expand: true, flatten: false, cwd: 'node_modules/bootstrap/dist/fonts/', src: ['**/*.*'], dest: 'public/fonts/' },
+    { expand: true, flatten: false, cwd: 'node_modules/font-awesome/fonts/', src: ['**/*.*'], dest: 'public/fonts/' }
+  ];
+
+  var applicationFiles = [
+    'assets/js/**/*.js',
+    '!assets/js/application.js',
+    configuration === 'qa' ? 'angular.QA.config.js' :
+      configuration === 'release' ? 'angular.Release.config.js' :
+        configuration === 'staging' ? 'angular.Staging.config.js' :
+          configuration === 'uat' ? 'angular.UAT.config.js' : 'angular.config.js',
+    'assets/js/application.js'
+  ];
+
+  var javascriptFiles = [
+    '*.js',
+    'assets/**/*.js'
+  ];
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    clean: {
-      all: ['web/public']
-    },
-    compass: {
-      all: {
+
+    ngtemplates: {
+      options: {
+        standalone: true,
+        htmlmin: {
+          collapseWhitespace: true,
+          removeComments: true
+        }
+      },
+      templates: {
+        src: ['**/*.htm'],
+        dest: 'public/js/templates.js',
+        cwd: 'assets/',
         options: {
-          sassDir: 'web/assets/scss',
-          cssDir: 'web/public/css',
-          imagesDir: 'web/public/css',
-          outputStyle: 'compressed',
-          noLineComments: true,
+          prefix: "template/",
+          module: "templates"
         }
       }
     },
-    watch: {
-      css: {
-        files: ['web/assets/scss/**/*.scss'],
-        tasks: ['compass'],
-        options: { spawn: false }
+
+    clean: {
+      build: ['public'],
+//      publish: {
+//        src: [publishLocation + '*'],
+//        options: {
+//          force: true
+//        }
+//      }
+    },
+
+    uglify: {
+      options: {
+        mangle: false,
+        beautify: true,
+        //compress: {},
+        wrap: false
+      },
+      all: {
+        files: {
+          'public/js/thirdparty.js': thirdPartyFiles,
+          'public/js/application.js': applicationFiles
+        }
+      },
+      app: {
+        files: {
+          'public/js/application.js': applicationFiles
+        }
+      }
+    },
+
+    compass: {
+      dist: {
+        options: {
+          httpPath: '/',
+          sassDir: 'assets/scss',
+          cssDir: 'public/css',
+          imagesDir: 'public/img',
+          javascriptsDir: 'public/js',
+          outputStyle: 'compress',
+          noLineComments: true
+        }
+      }
+    },
+
+    copy: {
+      build: {
+        files: copyFiles
+      },
+      publish: {
+        files: [
+          { expand: true, flatten: false, src: ['public/**/*.*'], dest: publishLocation },
+          { expand: true, flatten: false, src: ['index.html'], dest: publishLocation },
+          { expand: true, flatten: false, src: ['favicon.ico'], dest: publishLocation },
+          { expand: true, flatten: false, src: ['web.config'], dest: publishLocation }
+        ]
       }
     },
     jshint: {
       options: {
         bitwise: true,
+        laxcomma: true,
         camelcase: false,
-        eqeqeq: false,
+        eqeqeq: true,
         forin: true,
         immed: true,
         indent: 4,
         latedef: true,
-        newcap: false,
+        newcap: true,
         noarg: true,
         noempty: true,
         nonew: true,
@@ -80,142 +145,185 @@ module.exports = function (grunt) {
         undef: true,
         unused: true,
         trailing: true,
-        predef: ["angular", "window", "document", "console"]
+        predef: ["angular", "window", "document", "console", "$"]
       },
-      all: [
-        'web/assets/**/*.js'
-      ],
+      all: javascriptFiles,
       single: []
+    },
+
+    watch: {
+      javascript: {
+        files: javascriptFiles,
+        tasks: ['uglify:app'],
+        options: {
+          spawn: false,
+        }
+      },
+      html: {
+        files: ['assets/**/*.htm'],
+        tasks: ['ngtemplates'],
+        options: {
+          spawn: false,
+        }
+      },
+      styles: {
+        files: ['assets/scss/**/*.scss'],
+        tasks: ['compass'],
+        options: {
+          spawn: false,
+        }
+      },
+      viewStyles: {
+        files: ['views/**/*.scss'],
+        tasks: ['concat:views', 'compass'],
+        options: {
+          spawn: false,
+        }
+      }
+    },
+
+    serve: {
+      options: {
+        port: 9000
+      }
     }
   });
 
-  // Add watches for the javascript files, html files, and css files
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compass');
-  grunt.loadNpmTasks('grunt-angular-templates');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-
-  var setupWatches = function () {
-    for (assetName in grunt.assets) {
-      var asset = grunt.assets[assetName];
-
-      // watch js files.
-      if (asset.js) {
-        grunt.config('watch.' + assetName + '_js', {
-          files: asset.js,
-          tasks: ['uglify:' + assetName, 'uglify:' + assetName + '-min'],
-          options: { spawn: false }
-        })
-      };
-
-      if (asset.templates) {
-        grunt.config('watch.' + assetName + '_html', {
-          files: asset.templates,
-          tasks: ['ngtemplates:' + assetName, 'uglify:' + assetName, 'uglify:' + assetName + '-min'],
-          options: {
-            cwd: {
-              files: 'web/assets/modules/' + assetName + '/features',
-            },
-            spawn: false
-          }
-        })
-      }
-    }
-  }
-
-  grunt.event.on('watch', function (action, filepath, target) {
+  grunt.event.on('watch', function (action, filepath) {
     if (filepath.indexOf('.js') > 0) {
-      process.stdout.write('\x1Bc');
+      // Clear the Console.
+      process.stdout.write('\x1Bc'); // jshint ignore:line
       grunt.config('jshint.single', filepath);
       grunt.task.run('jshint:single');
     }
   });
 
-  grunt.registerTask('build', 'builds the assets', function (section) {
+  grunt.registerTask('appOffline', 'generates the app_offline file', function () {
+    grunt.file.write(publishLocation + 'app_offline.htm',
+      '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n' +
+      '<html xmlns="http://www.w3.org/1999/xhtml" >\n' +
+      '<head>\n' +
+      '    <title>Application Offline</title>\n' +
+      '    <style type="text/css">\n' +
+      '\n' +
+      '    div {\n' +
+      '        background-color:#ffffcc;\n' +
+      '        padding-top:10px;\n' +
+      '        padding-bottom:10px;\n' +
+      '        padding-left:10px;\n' +
+      '        padding-right:10px;\n' +
+      '        border-style:solid;\n' +
+      '        border-color:Black;\n' +
+      '        border-width:1px;\n' +
+      '    }\n' +
+      '\n' +
+      '    </style>\n' +
+      '</head>\n' +
+      '<body>\n' +
+      '    <div ID=Application_Offline>\n' +
+      '        This application is currently offline.  To enable the application, remove the\n' +
+      '        app_offline.htm file from the application root directory.\n' +
+      '    </div>\n' +
+      '</body>\n' +
+      '</html>');
+  });
 
+  grunt.registerTask('appOnline', 'removes app_offline file', function () {
+    grunt.file.delete(publishLocation + 'app_offline.htm', { force: true });
+  });
+
+  grunt.registerTask('deploy', 'Deploys the application to the specified environment.', function () {
+    if (publishLocation.length > 0) {
+      //grunt.task.run('clean:publish');
+      grunt.task.run('appOffline');
+      grunt.task.run('copy:publish');
+      grunt.task.run('appOnline');
+    }
+  });
+
+  grunt.registerTask('help', 'Lists a menu of tasks.', function () {
+
+    // takes a string and wraps it, padding the beginning of each line with spaces.
+    var wrapString = function (padding, name, line) {
+      var maxCharacterLength = 80;
+
+      var spacer = Array(padding + 1).join(' ');
+
+      var taskName = Array((padding + 1) - name.length).join(' ') + name;
+
+      var descriptionMaxCharacerLength = maxCharacterLength - (padding + 1);
+      var segments = line.split(' ');
+
+      var lines = [];
+      line = '';
+
+      for (var index in segments) {
+        if (segments.hasOwnProperty(index)) {
+          var segment = segments[index];
+
+          if (line.length + segment.length > descriptionMaxCharacerLength) {
+            if (lines.length === 0)
+              lines.push(taskName + '  ' + line + '\n');
+            else
+              lines.push(spacer + '  ' + line + '\n');
+
+            line = '';
+          }
+
+          line += ' ' + segment;
+          line.trim();
+        }  
+      }
+
+      if (lines.length === 0)
+        lines.push(taskName + '  ' + line);
+      else
+        lines.push(spacer + '  ' + line);
+
+      return lines.join('');
+    };
+
+    var maxTaskNameLength = 0;
     var tasks = [];
 
-    var sections = {};
+    if (grunt.task._tasks.length === 0)
+      console.log("No tasks registered.");
 
-    if (section != null) {
-      if (grunt.assets[section] != null) {
-        sections[section] = {};
-      } else {
-        console.log("Section '" + section + '" not found, ending...');
-        return;
-      }
-    } else {
-      sections = grunt.assets;
-    }
+    for (var task in grunt.task._tasks) {
+      if (grunt.task._tasks.hasOwnProperty(task)) {
+        var taskitem = grunt.task._tasks[task];
+        var name = taskitem.name;
+        var info = taskitem.info;
 
-    for (assetName in sections) {
-      var asset = grunt.assets[assetName];
+        if (name.length > maxTaskNameLength)
+          maxTaskNameLength = name.length;
 
-      if (asset['templates'] != null && asset['templates'].length > 0) {
-        grunt.config('ngtemplates.' + assetName, {
-          cwd: 'web/assets/modules/' + assetName + '/features',
-          src: asset['templates'],
-          dest: '.gruntCache/' + assetName + '.templates.js',
-          options: {
-            standalone: true,
-            prefix: '',
-            module: assetName + '.templates',
-            htmlmin: {
-              collapseWhitespace: true,
-              removeComments: true
-            }
-          }
-        });
-        tasks.push('ngtemplates:' + assetName);
-      }
-      if (asset['js'] != null && asset['js'].length > 0) {
-        grunt.config('uglify.' + assetName, {
-          options: {
-            //banner: "(function(window, undefined) {'use strict';\n\n",
-            //footer: "\n\n})(window);",
-            mangle: false,
-            beautify: true,
-          },
-          files: [{
-            src: asset['js'],
-            dest: "web/public/js/" + assetName + ".js"
-          }]
-        });
-        tasks.push('uglify:' + assetName);
-
-        grunt.config('uglify.' + assetName + '-min', {
-          options: {
-            //banner: "(function(window, undefined) {'use strict';\n\n",
-            //footer: "\n\n})(window);",
-            mangle: false,
-            beautify: true,
-          },
-          files: [{
-            src: asset['js'],
-            dest: "web/public/js/" + assetName + ".min.js"
-          }]
-        });
-        tasks.push('uglify:' + assetName + '-min');
-      }
-      if (asset['files'] != null && asset['files'].length > 0) {
-        grunt.config('copy.' + assetName, {
-          files: asset['files']
-        });
-        tasks.push('copy:' + assetName);
+        if (info.indexOf('Alias for "') > -1 && name !== 'default')
+          tasks.push({ name: name, info: info });
       }
     }
 
-    grunt.task.run(tasks);
-  })
+    console.log(''); // Spacer
+    for (var n = 0; n < tasks.length; n++) {
+      console.info(wrapString(maxTaskNameLength + 1, tasks[n].name, tasks[n].info));
+    }
+    console.log(''); // Spacer
+    console.info("## Use --config argument to change environments ");
+    console.info("## " + "Example: grunt publish --config=qa".yellow);
+  });
 
-  // Default task(s).
-  grunt.loadTasks('testing');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-compass');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-angular-templates');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-serve');
 
-  grunt.registerTask('default', ['clean', 'jshint:all', 'build', 'compass', 'watch']);
-
-  setupWatches();
+  grunt.registerTask('default', ['help']);
+  grunt.registerTask('build', ['clean:build', 'ngtemplates', 'jshint:all', 'uglify', 'compass', 'copy:build']);
+  grunt.registerTask('monitor', ['watch']);
+  grunt.registerTask('publish', ['clean:build', 'ngtemplates', 'jshint:all', 'uglify', 'compass', 'copy:build', 'deploy']);
+  grunt.registerTask('run', ['serve']);
 };
