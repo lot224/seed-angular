@@ -1,0 +1,51 @@
+﻿@import "_partials/page";
+@import "_partials/list";
+
+body {
+  // New claim has a 2 level navigation, increase the top padding.
+  padding-top: 4px + ($navbar-height * 2);// 104px;
+  padding-bottom: 500px;
+}
+
+.summary-panel {
+  position: absolute;
+  right: 0;
+  top:100%;
+  margin-top:20px;
+}
+
+.summary-panel-inline {
+  display: none !important;
+}
+
+.drop-down-list-items {
+  .list-group-item:last-child {
+    margin-bottom:15px;
+  }
+}
+
+dl {
+  dd {
+    margin-left:15px;
+  }
+}
+
+@media only screen and (max-width : 768px) {
+  body {
+    padding-top: 2px + $navbar-height;
+  }
+
+  .navbar-line-2 { 
+    display:none;
+  }
+}
+
+@media only screen and (max-width : 992px) {
+  .summary-panel { 
+    display:none;
+  }
+
+  .summary-panel-inline {
+    display: inherit !important;
+  }
+}

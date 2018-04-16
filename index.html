@@ -1,60 +1,483 @@
 ﻿<!DOCTYPE html>
-<html ng-app>
+<html ng-app="application">
   <head>
     <title></title>
     <meta charset="utf-8" />
     <link href="public/css/site.css" rel="stylesheet" />
-    <script src="public/js/vendor.min.js"></script>
+    <link href="public/css/newClaim.css" rel="stylesheet" />
+    
+
+    <script src="node_modules/jquery/dist/jquery.js" type="text/javascript"></script>
+
+    <script src="node_modules/angular/angular.js" type="text/javascript"></script>
+    <script src="node_modules/angular-animate/angular-animate.js" type="text/javascript"></script>
+    <script src="node_modules/angular-route/angular-route.js" type="text/javascript"></script>
+    <script src="node_modules/angular-sanitize/angular-sanitize.js" type="text/javascript"></script>
+    
+    <script src="assets/vendor/jdewit/bootstrap-datepicker.js" type="text/javascript"></script>
+    <script src="assets/vendor/jdewit/bootstrap-timepicker.js" type="text/javascript"></script>
+    <script src="assets/vendor/jdewit/angular-datetimepicker.js" type="text/javascript"></script>
+
+    <script src=" node_modules/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
+
+    <script src=" ctrl.js" type="text/javascript"></script>
   </head>
-  <body id="mybody" ng-init="ng=true">
-    <div class="navbar navbar-default navbar-fixed-top">
+  <body ng-controller="ctrl">
+
+    <script id="template.claimSummary" type="text/ng-template">
+      <dl>
+        <dt>Client:</dt>
+        <dd>Ashland</dd>
+      </dl>
+    </script>
+
+    <div id="navigation" class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="../" class="navbar-brand active">Application Name</a>
+          <a href="../" class="navbar-brand active">Claimslink 360 (?)</a>
+          <span class="navbar-text pull-left">New Claim</span>     
           <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
         </div>
+
         <div class="navbar-collapse collapse" id="navbar-main">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">3rd Party <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="themes">
-                <li><a href="../Custom/">Custom</a></li>
-                <li class="divider"></li>
-                <li><a href="http://jquery.com/">jQuery</a></li>
-                <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
-                <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
-                <li><a href="http://bootswatch.com/" target="_blank">Bootswatch</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="../help/">Help</a>
-            </li>
-            <li>
-              <a href="https://github.com/lot224/seed-angular" target="_blank">About</a>
-            </li>
-          </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="http://getbootstrap.com/" target="_blank">Built With Bootstrap</a></li>
-            <li><a href="https://angularjs.org/" target="_blank">Angular</a></li>
+            <li><a href="#">Dave Gardyasz</a></li>
+            <li><a href="#">Logout</a></li>
           </ul>
+        </div>
+      </div>  
+      <div class="navbar-line-2">
+        <div class="container" style="position:relative;">
+          <div class="row">
+            <ul class="nav navbar-nav navbar-left">
+              <li><a href="#identifyClient">Identify Client</a></li>
+              <li><a href="#identifyAsset">Identify Asset</a></li>
+              <li><a href="#">Identify Branch</a></li>
+              <li><a href="#">Claim Details</a></li>
+              <li class="summary-panel-inline"><a href="#">Claim Summary</a></li>
+            </ul>
+
+            <div class="col-md-4 summary-panel">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Claim Summary</h3>
+                </div>
+                <div class="panel-body" ng-include="'template.claimSummary'"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="container">
-      <ul id="myItems">
-        <ol>Angular is <span ng-hide="ng">not </span>active</ol>
-        <ol>jQuery is <span id="jqueryActive">not </span>active</ol>
-      </ul>
+    <div class="container" style="position:relative">
+      <div class="row">
+        <div class="col-md-8">
+          <div id="identifyClient" name="identifyClient">
+            <h3 class="page-header">Identify Client</h3>
+            <div style="text-align:right">
+              <label class="checkbox-inline"><input type="checkbox" ng-model="state.showExpiredCompanies" /> Show Expired Companies</label>
+            </div>
+            <div class="input-group" ng-init="state.cmbCompaniesVisible=false">
+              <span class="input-group-addon">Company</span>
+              <span class="form-control" ng-click="state.cmbCompaniesVisible = !state.cmbCompaniesVisible"></span>
+
+              <div class="panel panel-default modal-content panel-absolute" ng-class="{'panel-absolute-active':state.cmbCompaniesVisible == true}">
+                <div class="panel-heading">
+                  <div class="input-group">
+                    <span class="input-group-addon">Filter</span>
+                    <input class="form-control" />
+                  </div>
+                </div>
+                <div class="panel-body" style="height:250px; overflow-y:scroll">
+                  <ol class="list-group">
+                    <button type="button" class="list-group-item" ng-repeat="item in clients">{{item.value}}</button>
+                  </ol>
+                </div>
+              </div>
+
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="state.cmbCompaniesVisible = !state.cmbCompaniesVisible">
+                  <span class="caret"></span>
+                  <span class="sr-only">Show Companies</span>
+                </button>
+                <button class="btn btn-default" type="button" data-toggle="modal" title="Alias Search" data-target="#dlgClientSearch">
+                  <span class="glyphicon glyphicon-option-horizontal"></span>
+                  <span class="sr-only">Company Alias Search</span>
+                </button>
+              </span>
+            </div>
+
+            <div class="modal fade" id="dlgClientSearch" tabindex="-1" role="dialog" aria-labelledby="dlgClientSearchLabel">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="dlgClientSearchLabel">Identify Client - Alias Search</h4>
+                  </div>
+                  <div class="modal-body">
+
+                    <div class="input-group">
+                      <span class="input-group-addon">Alias</span>
+                      <input class="form-control" />
+                      <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">Search</button>
+                      </span>
+                    </div>
+
+                    <div style="height:400px; overflow-y:scroll; margin-top:15px;">
+                      <table class="table table-hover table-striped table-condensed">
+                        <thead>
+                          <tr>
+                            <td>Client</td>
+                            <td>Branch</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in aliasSearch">
+                            <td>{{item.c.n}}</td>
+                            <td>{{item.b.n}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="identifyAsset" name="identifyAsset">
+            <h3 class="page-header">Identify Asset</h3>
+            <div class="form-group" style="margin-top:15px;">
+              <label for="exampleInputEmail1">Search Type</label><br />
+              <label class="checkbox-inline"><input type="radio" ng-model="_assetSearchType" value="E" /> By Employee</label>
+              <label class="checkbox-inline"><input type="radio" ng-model="_assetSearchType" value="V" /> By Vehicle</label>
+            </div>
+
+            <div ng-repeat="item in asset.assetCriteria | filter:assetCriteriaFilter" class="form-group">
+              <label for="{{item.ControlName}}">{{item.LiteralName}}</label>
+              <input type="text" class="form-control" id="txt{{item.ControlName}}" name="{{item.ControlName}}" ng-model="item.value" />
+            </div>
+
+            <div ng-show="_assetSearchType" style="text-align:right">
+              <button class="btn btn-default" type="button" data-toggle="modal" data-target="#dlgAssetSearch">Search</button>
+            </div>
+
+            <div class="modal fade" id="dlgAssetSearch" tabindex="-1" role="dialog" aria-labelledby="dlgAssetSearchLabel">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="dlgAssetSearchLabel">
+                      <span ng-if="_assetSearchType == 'V'">Identify Asset - Vehicle Search</span>
+                      <span ng-if="_assetSearchType == 'E'">Identify Asset - Employee Search</span>
+                    </h4>
+                  </div>
+                  <div class="modal-body">
+                    <div style="height:400px; overflow-y:scroll; margin-top:15px;">
+                      <table ng-if="_assetSearchType == 'E'" class="table table-hover table-striped table-condensed">
+                        <thead>
+                          <tr>
+                            <td>Employee Id</td>
+                            <td>Employee #</td>
+                            <td>First Name</td>
+                            <td>Last Name</td>
+                            <td>License #</td>
+                            <td>Address</td>
+                            <td>City</td>
+                            <td>StateProvince</td>
+                            <td>Home Phone</td>
+                            <td>Last Claim</td>
+                            <td>Last Update</td>
+                            <td>Client Name</td>
+                            <td>Branch Name</td>
+                            <td>Org ID</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in assetSearchEmployeeResults">
+                            <td>{{item.ClientEmployeeListID}}</td>
+                            <td>{{item.ClientEmployeeNo}}</td>
+                            <td>{{item.FirstName}}</td>
+                            <td>{{item.LastName}}</td>
+                            <td>{{item.LicenseNo}}</td>
+                            <td>{{item.Address1}}</td>
+                            <td>{{item.City}}</td>
+                            <td>{{item.StateProvince}}</td>
+                            <td>{{item.PhoneHome}}</td>
+                            <td>{{item.LastClaim}}</td>
+                            <td>{{item.LastUpdate}}</td>
+                            <td>{{item.Client_Org_Name}}</td>
+                            <td>{{item.Branch_Org_Name}}</td>
+                            <td>{{item.OrgStructureID}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table ng-if="_assetSearchType == 'V'" class="table table-hover table-striped table-condensed">
+                        <thead>
+                          <tr>
+                            <td>Client Veh Id</td>
+                            <td>Claim Veh Id</td>
+                            <td>Org Id</td>
+                            <td>Client Veh #</td>
+                            <td>Year</td>
+                            <td>Make</td>
+                            <td>Model</td>
+                            <td>Style Id</td>
+                            <td>VIN</td>
+                            <td>Plate #</td>
+                            <td>StateProvince</td>
+                            <td>Mileage</td>
+                            <td>MileageDistanceID</td>
+                            <td>Last Reported Mileage</td>
+                            <td>Color Id</td>
+                            <td>Prior Damage</td>
+                            <td>Prior Dmg Last Update</td>
+                            <td>Travel Dir Id</td>
+                            <td>Has Driver</td>
+                            <td>Has Passenger</td>
+                            <td>Client Employee List Id</td>
+                            <td>Client Veh Owner Id</td>
+                            <td>Primary Client Veh #</td>
+                            <td>Veh Book Value</td>
+                            <td>New Veh on Order</td>
+                            <td>On Road Date</td>
+                            <td>Off Road Date</td>
+                            <td>Contract Start Date</td>
+                            <td>Contract End Date</td>
+                            <td>Detail 1</td>
+                            <td>Detail 2</td>
+                            <td>Detail 3</td>
+                            <td>Detail 4</td>
+                            <td>Detail 5</td>
+                            <td>Detail 6</td>
+                            <td>Details</td>
+                            <td>Create User ID</td>
+                            <td>Create Date</td>
+                            <td>Update User ID</td>
+                            <td>Update Date</td>
+                            <td>Plate Country Id</td>
+                            <td>Veh Book Value Currency Id</td>
+                            <td>Client Name</td>
+                            <td>Branch Name</td>
+                            <td>Color</td>
+                            <td>Vehicle Style</td>
+                            <td>Service Type Id</td>
+                            <td>Client Title</td>
+                            <td>Asset Owner Id</td>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in assetSearchVehicleResults">
+                            <td>{{item.ClientVehicleListID}}</td>
+                            <td>{{item.ClaimVehicleID}}</td>
+                            <td>{{item.OrgStructureID}}</td>
+                            <td>{{item.ClientVehNo}}</td>
+                            <td>{{item.VehYear}}</td>
+                            <td>{{item.Make}}</td>
+                            <td>{{item.Model}}</td>
+                            <td>{{item.VehicleStyleID}}</td>
+                            <td>{{item.VIN}}</td>
+                            <td>{{item.PlateNo}}</td>
+                            <td>{{item.StateProvince}}</td>
+                            <td>{{item.Mileage}}</td>
+                            <td>{{item.MileageDistanceID}}</td>
+                            <td>{{item.LastMileage_DT_Local}}</td>
+                            <td>{{item.ColorID}}</td>
+                            <td>{{item.PriorDamage}}</td>
+                            <td>{{item.PriorDmgLstUpdate}}</td>
+                            <td>{{item.TravDirID}}</td>
+                            <td>{{item.HasDriver}}</td>
+                            <td>{{item.HasPassenger}}</td>
+                            <td>{{item.ClientEmployeeListID}}</td>
+                            <td>{{item.ClientVehOwnerID}}</td>
+                            <td>{{item.PrimaryClientVehNum}}</td>
+                            <td>{{item.VehBookValue}}</td>
+                            <td>{{item.NewVehOnOrder}}</td>
+                            <td>{{item.OnRoadDate_Local}}</td>
+                            <td>{{item.OffRoadDate_Local}}</td>
+                            <td>{{item.ContractStartDate_Local}}</td>
+                            <td>{{item.ContractEndDate_Local}}</td>
+                            <td>{{item.VehicleDetail1}}</td>
+                            <td>{{item.VehicleDetail2}}</td>
+                            <td>{{item.VehicleDetail3}}</td>
+                            <td>{{item.VehicleDetail4}}</td>
+                            <td>{{item.VehicleDetail5}}</td>
+                            <td>{{item.VehicleDetail6}}</td>
+                            <td>{{item.VehicleDetails}}</td>
+                            <td>{{item.CreateUserID}}</td>
+                            <td>{{item.Create_DT_Local}}</td>
+                            <td>{{item.UpdateUserID}}</td>
+                            <td>{{item.Update_DT_Local}}</td>
+                            <td>{{item.PlateCountryID}}</td>
+                            <td>{{item.VehBookValueCurrencyID}}</td>
+                            <td>{{item.ClientOrgName}}</td>
+                            <td>{{item.BranchOrgName}}</td>
+                            <td>{{item.Color}}</td>
+                            <td>{{item.VehicleStyle}}</td>
+                            <td>{{item.ServiceTypeID}}</td>
+                            <td>{{item.ClientTitle}}</td>
+                            <td>{{item.AssetOwnerID}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="identifyBranch" name="identifyBranch">
+            <h3 class="page-header">Identify Branch</h3>
+            <ol class="breadcrumb">
+              <span ng-repeat="item in breadCrumb" style="display:block; margin-top:5px; margin-bottom:5px; margin-left: {{$index * 20}}px">
+                <button ng-if="!$last" style="width:100%; text-align:left;" ng-click="loadSubBranch(item.id)">{{item.name}}</button>
+                <span ng-if="$last">{{item.name}}</span>
+              </span>
+            </ol>
+            <div class="panel panel-default">
+              <div class="panel-heading container-fluid">
+                <div class="row">
+                  <h3 class="col-xs-6 panel-title">{{breadCrumb[breadCrumb.length-1].name}}</h3>
+                  <div class="col-xs-6" style="text-align:right" ng-init="state.showExpiredBranches = false">
+                    <label class="checkbox-inline"><input type="checkbox" ng-model="state.showExpiredBranches" /> Show Expired Branches</label>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body" style="height:250px; overflow-y:scroll">
+                <ol class="list-group">
+                  <button type="button" class="list-group-item" ng-click="loadSubBranch(item.id)" ng-repeat="item in breadCrumbBranches">{{item.name}}</button>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <div id="claimDetails" name="claimDetails">
+            <h3 class="page-header">Claim Details</h3>
+            <div style="text-align:right" ng-init="state.showUnsupportedServiceTypes = false">
+              <label class="checkbox-inline"><input type="checkbox" ng-model="state.showUnsupportedServiceTypes" /> Show Unsupported Types</label>
+            </div>
+            <div class="input-group" ng-init="state.cmbServiceTypesVisible=false">
+              <span class="input-group-addon">Service Type</span>
+              <span class="form-control" ng-click="state.cmbServiceTypesVisible = !state.cmbServiceTypesVisible"></span>
+
+              <div class="panel panel-default modal-content panel-absolute" ng-class="{'panel-absolute-active':state.cmbServiceTypesVisible == true}">
+                <div class="panel-body" style="height:250px; overflow-y:scroll">
+                  <ol class="list-group">
+                    <button type="button" class="list-group-item" ng-repeat="item in serviceTypes">{{item.name}}</button>
+                  </ol>
+                </div>
+              </div>
+
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" ng-click="state.cmbServiceTypesVisible = !state.cmbServiceTypesVisible">
+                  <span class="caret"></span>
+                  <span class="sr-only">Show Claim Types</span>
+                </button>
+              </span>
+            </div>
+
+            <!--// Form //-->
+
+
+              <div class="form-group" style="margin-top:15px;">
+                <label>Body damage</label><br />
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.bodyDamage" ng-value="true"> Yes</label>
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.bodyDamage" ng-value="false"> No</label>
+              </div>
+
+              <div class="form-group" style="margin-top:15px;">
+                <label>Glass damage</label><br />
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.glassDamage" ng-value="true"> Yes</label>
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.glassDamage" ng-value="false"> No</label>
+              </div>
+
+              <div class="form-group" style="margin-top:15px;">
+                <label>Is tow needed</label><br />
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.towRequired" ng-value="true"> Yes</label>
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.towRequired" ng-value="false"> No</label>
+              </div>
+
+              <div class="form-group" style="margin-top:15px;">
+                <label>Damage warrants vehicle to be left at shop</label><br />
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.vehicleInShop" ng-value="true"> Yes</label>
+                <label class="checkbox-inline"><input type="radio" ng-model="model.claimDetails.vehicleInShop" ng-value="false"> No</label>
+              </div>
+
+            <div class="form-group" style="margin-top:15px;">
+              <label>Date of loss</label><br />
+              <label class="checkbox-inline" style="display:table-cell;">
+                <div class="input-group">
+                  <span class="input-group-addon">Date</span>
+                  <input type="text" class="date-picker form-control"></input>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                      <span class="glyphicon glyphicon-calendar glyphicon-arrow-left"></span>
+                      <span class="sr-only">Show Date</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+              <label class="checkbox-inline" style="display:table-cell;">
+                <div class="input-group">
+                  <span class="input-group-addon">Time</span>
+                  <input type="text" class="time-picker form-control"></input>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                      <span class="glyphicon glyphicon-time"></span>
+                      <span class="sr-only">Show Time</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group" style="margin-top:15px;">
+              <label>Date reported</label><br />
+              <label class="checkbox-inline" style="display:table-cell;">
+                <div class="input-group">
+                  <span class="input-group-addon">Date</span>
+                  <input type="text" class="date-picker form-control"></input>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                      <span class="sr-only">Show Date</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+              <label class="checkbox-inline" style="display:table-cell;">
+                <div class="input-group">
+                  <span class="input-group-addon">Time</span>
+                  <input type="text" class="time-picker form-control"></input>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">
+                      <span class="glyphicon glyphicon-time"></span>
+                      <span class="sr-only">Show Time</span>
+                    </button>
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div id="claimSummary" name="claimSummary" class="summary-panel-inline">
+            <h3 class="page-header">Claim Summary</h3>
+            <div ng-include="'template.claimSummary'"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-  </body>
 
-  <script type="text/javascript">
-    $("#jqueryActive").remove();
-  </script>
+    <textarea style=" width:100%; height:500px">{{fn.parse()}}</textarea>
+
+  </body>
 </html>

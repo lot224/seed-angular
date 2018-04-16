@@ -1,14 +1,6 @@
-﻿/*!
- * bootstrap v3.3.5 (http://getbootstrap.com)
- * Copyright 2011-2015 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
-@import "../../node_modules/bootswatch/slate/variables";
+﻿@import "_partials/bootstrap";
+@import "_partials/navbar";
 
-// Add Variable Changes here.
 body {
   padding-top: 65px;
 }
-
-@import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "../../node_modules/bootswatch/slate/bootswatch";

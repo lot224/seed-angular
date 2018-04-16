@@ -1,0 +1,13 @@
+﻿.panel-absolute {
+  position:absolute;
+  display:none;
+
+  &.panel-absolute-active {
+    display: initial;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    top: 100%;
+    z-index:100;
+  }
+}

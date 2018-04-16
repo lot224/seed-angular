@@ -1,0 +1,30 @@
+﻿
+.navbar-line-2 {
+  position: relative;
+  padding-top: 2px;
+
+  &:before {
+    height: 2px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    left: 0;
+    right: 0;
+    top: 0;
+    position: absolute;
+    content: "";
+  }
+}
+
+
+
+.navbar-text {
+  label {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    input {
+      margin:auto;
+      vertical-align: middle;
+    }
+  }
+}

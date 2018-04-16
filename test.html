@@ -1,0 +1,48 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+<body>
+</body>
+
+<script type="text/javascript">
+
+  function example1() {
+    function bar() {
+      return 4;
+    }
+    return bar();
+
+    function bar() {
+      return 8;
+    }
+  };
+ 
+  console.log(example1());
+
+
+  function example2() {
+    var objA, objB;
+    objB = objA = { "id": 1, "firstName": "John" };
+
+    objB.id = 42;
+
+    return [objA, objB];
+  }
+
+  console.log(example2());
+
+  function example3() {
+    var objA, objB;
+    objB = objA = 5;
+
+    objB = 42;
+
+    return [objA, objB];
+  }
+
+  console.log(example3());
+
+</script>
+
+</html>

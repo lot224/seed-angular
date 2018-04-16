@@ -1,0 +1,13 @@
+﻿.cei-datetime-date, .cei-datetime-time {
+  position: absolute;
+  top: 100%;
+  left: 0px;
+  right: 0px;
+  margin: auto;
+  z-index: 200;
+  margin-top: 15px;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  outline: none;
+}

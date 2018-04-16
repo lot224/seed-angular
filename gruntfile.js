@@ -1,5 +1,4 @@
-﻿
-module.exports = function (grunt) {
+﻿module.exports = function (grunt) {
 
   var vendor = {
     js: [
@@ -8,7 +7,10 @@ module.exports = function (grunt) {
       'node_modules/angular-animate/angular-animate.js',
       'node_modules/angular-route/angular-route.js',
       'node_modules/angular-sanitize/angular-sanitize.js',
-      'node_modules/bootstrap/dist/js/bootstrap.js'
+      'node_modules/bootstrap/dist/js/bootstrap.js',
+      'assets/vendor/jdewit/bootstrap-datepicker.js',
+      'assets/vendor/jdewit/bootstrap-timepicker.js',
+      'assets/vendor/jdewit/angular-datetimepicker.js'
     ],
     css: [],
     files: [
@@ -18,6 +20,44 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    ngtemplates: {
+      ceiDateTime: {
+        src: 'datetime/*.html',
+        dest: 'web/public/js/cei.datetime.templates.js',
+        cwd: 'assets/js/modules/',
+        options: {
+          standalone: true,
+          prefix: "cei/",
+          module: "cei.datetime.templates",
+          htmlmin: {
+            collapseWhitespace: true,
+            removeComments: true
+          }
+        }
+      }
+    },
+    uglify: {
+      ceiDateTime: {
+        options: {
+          banner: "(function(window, undefined) {'use strict';\n\n",
+          footer: "\n\n})(window);",
+          mangle: false,
+          beautify: true,
+          compress: {
+            drop_console: false
+          }
+        },
+        files: [{
+          src: [
+            'assets/js/modules/datetime/date.js',
+            'assets/js/modules/datetime/time.js',
+            'assets/js/modules/datetime/datetime.js'
+          ],
+          dest: 'web/public/js/cei.datetime.js'
+        }]
+      }
+    },
     clean: {
       all: ['public']
     },
@@ -31,6 +71,13 @@ module.exports = function (grunt) {
           noLineComments: true,
         }
       }
+    },
+    watch: {
+      ceiDateTime: {
+        files: ['assets/js/modules/datetime/**/*.*'],
+        tasks: ['ngtemplates:ceiDateTime', 'uglify:ceiDateTime'],
+        options: { spawn: false }
+      },
     },
   });
 
@@ -49,7 +96,7 @@ module.exports = function (grunt) {
      * Because this is not a quick task, if the public folder exists we will not build the vendor related files.
      * A call to grunt clean will purge the public folder and allow a rebuild
      */
-    if (grunt.file.exists("public")) {
+    if (grunt.file.exists("dpublic")) {
       console.log("Public folder exists, skipping task creatingVendors.");
       console.log("  Delete Public folder if you have added any new vendors.");
       return;
@@ -103,4 +150,5 @@ module.exports = function (grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['creatingVendors', 'compass']);
+  grunt.registerTask('ceiDateTime', ['ngtemplates:ceiDateTime', 'uglify:ceiDateTime']);
 };

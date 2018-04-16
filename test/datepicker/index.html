@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html ng-app>
+  <head>
+    <title></title>
+    <link href="vendor.css" rel="stylesheet" />
+    <link href="site.css" rel="stylesheet" />
+    <link href="bootstrap-datepicker.css" rel="stylesheet" />
+    <link href="bootstrap-timepicker.css" rel="stylesheet" />
+
+    <script src="vendor.js"></script>
+    <script src="bootstrap-datepicker.js"></script>
+    <script src="bootstrap-timepicker.js"></script>
+  </head>
+  <body>
+    <div class="form-group" style="margin-top:15px;">
+      <label>Date of loss</label><br />
+      <label class="checkbox-inline" style="display:table-cell;">
+        <div class="input-group">
+          <span class="input-group-addon">Date</span>
+          <input type="text" class="ceiDate form-control"></input>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">
+              <span class="glyphicon glyphicon-calendar"></span>
+              <span class="sr-only">Show Date</span>
+            </button>
+          </span>
+        </div>
+      </label>
+      <label class="checkbox-inline" style="display:table-cell;">
+        <div class="input-group">
+          <span class="input-group-addon">Time</span>
+          <input type="text" class="ceiTime form-control"></input>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">
+              <span class="glyphicon glyphicon-time"></span>
+              <span class="sr-only">Show Time</span>
+            </button>
+          </span>
+        </div>
+      </label>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+    $('.ceiDate').datepicker();
+    $('.ceiTime').timepicker();
+
+    if ($) {
+      console.log('jQuery Active');
+    }
+
+  </script>
+
+</html>
